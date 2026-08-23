@@ -3,6 +3,7 @@ import sqlite3
 from datetime import datetime
 from google import genai
 from PIL import Image
+import pandas as pd
 import streamlit as st
 from streamlit_js_eval import get_geolocation
 
@@ -50,13 +51,23 @@ api_key = (
     else st.sidebar.text_input("Gemini API Key", type="password")
 )
 
-# GPS Konumu Alma (Tarayıcıdan)
+# --- GÜVENLİ KONUM ALMA (HATA ENGELLEYİCİ) ---
 location = get_geolocation()
-coords = (
-    f"{location['coords']['latitude']:.4f}, {location['coords']['longitude']:.4f}"
-    if location
-    else "Konum Alınamadı"
-)
+coords = "Konum Alınamadı"
+
+if (
+    location
+    and isinstance(location, dict)
+    and "coords" in location
+    and location["coords"]
+):
+    try:
+        lat = location["coords"].get("latitude")
+        lon = location["coords"].get("longitude")
+        if lat and lon:
+            coords = f"{lat:.4f}, {lon:.4f}"
+    except Exception:
+        coords = "Konum Alınamadı"
 
 tab1, tab2 = st.tabs(["📸 Yeni Ürün Tara", "📊 Geçmiş & Nerede Ucuz?"])
 
@@ -67,7 +78,6 @@ with tab1:
     )
     img_file = st.camera_input("Fotoğraf Çek")
 
-    # Manuel Fiyat Düzeltme / Doğrulama
     manuel_fiyat = st.number_input(
         "Etiketteki Fiyat (Görselden okuyamazsa buraya girin)",
         min_value=0.0,
@@ -107,7 +117,6 @@ with tab1:
                 )
                 data = json.loads(raw_text)
 
-                # Değerleri Ayıkla
                 marka = data.get("marka") or "Bilinmeyen Marka"
                 magaza = magaza_input or data.get("magaza") or "Bilinmeyen Market"
                 fiyat = (
@@ -143,7 +152,6 @@ with tab1:
                         f"💡 **Kat Ayarlı F/P Skoru:** {gercek_fp_skoru:.3f}\n\n*(Skor ne kadar DÜŞÜKSE ürün o kadar ucuzdur)*"
                     )
 
-                    # Veritabanına Kaydet Butonu
                     if st.button("💾 Bu Okumayı Veritabanına Kaydet"):
                         conn = sqlite3.connect(DB_FILE)
                         c = conn.cursor()
@@ -185,7 +193,6 @@ with tab2:
 
     if rows:
         st.write("🏆 **En Ucuzdan (En İyi F/P) En Pahalıya Sıralama:**")
-        import pandas as pd
 
         df = pd.DataFrame(
             rows,
@@ -202,7 +209,6 @@ with tab2:
         )
         st.dataframe(df, use_container_width=True)
 
-        # Temizleme opsiyonu
         if st.button("🗑️ Geçmişi Temizle"):
             conn = sqlite3.connect(DB_FILE)
             conn.cursor().execute("DELETE FROM scans")
