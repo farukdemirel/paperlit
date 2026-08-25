@@ -114,7 +114,7 @@ with tab1:
                 try:
                    # YENİ KOD (Güncel)
                     response = client.models.generate_content(
-                        model="gemini-1.5-flash", contents=[image, prompt]
+                        model="gemini-2.0-flash", contents=[image, prompt]
                     )
 
                     raw_text = (
