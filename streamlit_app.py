@@ -16,7 +16,6 @@ st.set_page_config(
 # =============================================================================
 DB_FILE = "tp_history.db"
 
-
 def init_db():
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
@@ -37,7 +36,6 @@ def init_db():
     conn.commit()
     conn.close()
 
-
 init_db()
 
 # =============================================================================
@@ -51,10 +49,9 @@ api_key = (
     else st.sidebar.text_input("Gemini API Key", type="password")
 )
 
-# --- GÜVENLİ KONUM ALMA (HATA ENGELLEYİCİ) ---
+# --- GÜVENLİ KONUM ALMA ---
 location = get_geolocation()
 coords = "Konum Alınamadı"
-
 if (
     location
     and isinstance(location, dict)
@@ -73,86 +70,94 @@ tab1, tab2 = st.tabs(["📸 Yeni Ürün Tara", "📊 Geçmiş & Nerede Ucuz?"])
 
 # --- TAB 1: TARAMA VE HESAPLAMA ---
 with tab1:
-    st.write(
-        "Kamerayı ambalaja ve (varsa) raf etiketine gösterecek şekilde çekin."
-    )
-    img_file = st.camera_input("Fotoğraf Çek")
+    st.write("Kamerayı ambalaja ve (varsa) raf etiketine gösterecek şekilde çekin.")
+    
+    # st.form kullanımı mobilde Enter tuşu zorunluluğunu kaldırır
+    with st.form("urun_giris_formu"):
+        img_file = st.camera_input("Fotoğraf Çek")
 
-    manuel_fiyat = st.number_input(
-        "Etiketteki Fiyat (Görselden okuyamazsa buraya girin)",
-        min_value=0.0,
-        value=0.0,
-        step=1.0,
-    )
-    magaza_input = st.text_input(
-        "Mağaza Adı (Örn: Migros, A101 - Boşsa görselden okunur)"
-    )
+        manuel_fiyat = st.number_input(
+            "Etiketteki Fiyat (Görselden okuyamazsa buraya girin)",
+            min_value=0.0,
+            value=0.0,
+            step=1.0,
+        )
+        magaza_input = st.text_input(
+            "Mağaza Adı (Örn: Migros, A101 - Boşsa görselden okunur)"
+        )
+        
+        # Ekrandaki tetikleyici buton
+        submit_btn = st.form_submit_button("🔍 Ürünü Analiz Et / Hesapla", use_container_width=True)
 
-    if img_file and api_key:
-        client = genai.Client(api_key=api_key)
-        image = Image.open(img_file)
+    if submit_btn:
+        if not api_key:
+            st.error("Lütfen Gemini API anahtarınızı girin.")
+        elif not img_file:
+            st.error("Lütfen önce bir fotoğraf çekin.")
+        else:
+            client = genai.Client(api_key=api_key)
+            image = Image.open(img_file)
 
-        prompt = """
-        Bu görseldeki tuvalet kağıdı ambalajını ve raf etiketini analiz et. SADECE aşağıdaki JSON formatında yanıt ver:
-        {
-          "marka": "Marka adı",
-          "magaza": "Etiketten tespit edilen mağaza/market adı (yoksa null)",
-          "fiyat": Float (Etiketten okunan fiyat TL cinsinden, yoksa null),
-          "rulo_sayisi": Integer (yoksa null),
-          "kat_sayisi": Integer (yoksa null),
-          "yaprak_sayisi": Integer (rulo başına yaprak, yoksa null)
-        }
-        """
+            prompt = """
+            Bu görseldeki tuvalet kağıdı ambalajını ve raf etiketini analiz et. SADECE aşağıdaki JSON formatında yanıt ver:
+            {
+              "marka": "Marka adı",
+              "magaza": "Etiketten tespit edilen mağaza/market adı (yoksa null)",
+              "fiyat": Float (Etiketten okunan fiyat TL cinsinden, yoksa null),
+              "rulo_sayisi": Integer (yoksa null),
+              "kat_sayisi": Integer (yoksa null),
+              "yaprak_sayisi": Integer (rulo başına yaprak, yoksa null)
+            }
+            """
 
-        with st.spinner("Görsel ve etiket analiz ediliyor..."):
-            try:
-                response = client.models.generate_content(
-                    model="gemini-2.5-flash", contents=[image, prompt]
-                )
-
-                raw_text = (
-                    response.text.replace("```json", "")
-                    .replace("```", "")
-                    .strip()
-                )
-                data = json.loads(raw_text)
-
-                marka = data.get("marka") or "Bilinmeyen Marka"
-                magaza = magaza_input or data.get("magaza") or "Bilinmeyen Market"
-                fiyat = (
-                    manuel_fiyat if manuel_fiyat > 0 else (data.get("fiyat") or 0.0)
-                )
-
-                rulo = data.get("rulo_sayisi") or 1
-                kat = data.get("kat_sayisi") or 1
-                yaprak = data.get("yaprak_sayisi") or 0
-                toplam_yaprak = rulo * yaprak
-
-                st.subheader(f"🔍 {marka} @ {magaza}")
-
-                if fiyat <= 0:
-                    st.warning(
-                        "⚠️ Fiyat görselden okunamadı, lütfen yukarıdaki alana manuel fiyat girin."
-                    )
-                else:
-                    rulo_basi_fiyat = fiyat / rulo
-                    gercek_fp_skoru = (
-                        (fiyat / (toplam_yaprak * kat)) * 100
-                        if (toplam_yaprak * kat) > 0
-                        else 0
+            with st.spinner("Görsel ve etiket analiz ediliyor..."):
+                try:
+                    response = client.models.generate_content(
+                        model="gemini-2.5-flash", contents=[image, prompt]
                     )
 
-                    st.write(f"• **Fiyat:** {fiyat:.2f} TL")
-                    st.write(f"• **Rulo / Kat:** {rulo} Rulo / {kat} Kat")
-                    st.write(f"• **Rulo Başı Yaprak:** {yaprak} Yaprak")
+                    raw_text = (
+                        response.text.replace("```json", "")
+                        .replace("```", "")
+                        .strip()
+                    )
+                    data = json.loads(raw_text)
 
-                    st.markdown("---")
-                    st.metric("Rulo Başı Fiyat", f"{rulo_basi_fiyat:.2f} TL")
-                    st.info(
-                        f"💡 **Kat Ayarlı F/P Skoru:** {gercek_fp_skoru:.3f}\n\n*(Skor ne kadar DÜŞÜKSE ürün o kadar ucuzdur)*"
+                    marka = data.get("marka") or "Bilinmeyen Marka"
+                    magaza = magaza_input or data.get("magaza") or "Bilinmeyen Market"
+                    fiyat = (
+                        manuel_fiyat if manuel_fiyat > 0 else (data.get("fiyat") or 0.0)
                     )
 
-                    if st.button("💾 Bu Okumayı Veritabanına Kaydet"):
+                    rulo = data.get("rulo_sayisi") or 1
+                    kat = data.get("kat_sayisi") or 1
+                    yaprak = data.get("yaprak_sayisi") or 0
+                    toplam_yaprak = rulo * yaprak
+
+                    st.subheader(f"🔍 {marka} @ {magaza}")
+
+                    if fiyat <= 0:
+                        st.warning(
+                            "⚠️ Fiyat görselden okunamadı. Lütfen yukarıdaki alana fiyat girip butona tekrar basın."
+                        )
+                    else:
+                        rulo_basi_fiyat = fiyat / rulo
+                        gercek_fp_skoru = (
+                            (fiyat / (toplam_yaprak * kat)) * 100
+                            if (toplam_yaprak * kat) > 0
+                            else 0
+                        )
+
+                        st.write(f"• **Fiyat:** {fiyat:.2f} TL")
+                        st.write(f"• **Rulo / Kat:** {rulo} Rulo / {kat} Kat")
+                        st.write(f"• **Rulo Başı Yaprak:** {yaprak} Yaprak")
+
+                        st.markdown("---")
+                        st.metric("Rulo Başı Fiyat", f"{rulo_basi_fiyat:.2f} TL")
+                        st.info(
+                            f"💡 **Kat Ayarlı F/P Skoru:** {gercek_fp_skoru:.3f}\n\n*(Skor ne kadar DÜŞÜKSE ürün o kadar ucuzdur)*"
+                        )
+
                         conn = sqlite3.connect(DB_FILE)
                         c = conn.cursor()
                         ts = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -160,7 +165,7 @@ with tab1:
                             """
                             INSERT INTO scans (timestamp, magaza, marka, fiyat, rulo, kat, yaprak, fp_skoru, konum)
                             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                        """,
+                            """,
                             (
                                 ts,
                                 magaza,
@@ -177,8 +182,8 @@ with tab1:
                         conn.close()
                         st.success("Veri başarıyla kaydedildi!")
 
-            except Exception as e:
-                st.error(f"Hata oluştu: {e}")
+                except Exception as e:
+                    st.error(f"Hata oluştu: {e}")
 
 # --- TAB 2: GEÇMİŞ VE KARŞILAŞTIRMA ---
 with tab2:
