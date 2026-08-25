@@ -112,8 +112,9 @@ with tab1:
 
             with st.spinner("Görsel ve etiket analiz ediliyor..."):
                 try:
+                   # YENİ KOD (Güncel)
                     response = client.models.generate_content(
-                        model="gemini-2.5-flash", contents=[image, prompt]
+                        model="gemini-1.5-flash", contents=[image, prompt]
                     )
 
                     raw_text = (
