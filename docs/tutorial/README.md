@@ -18,6 +18,7 @@ Bölümler numara sırasıyla okunmalıdır. Her bölüm mümkün olduğunca şu
 ## Bölümler
 
 1. [Projeye Başlangıç ve Çalışma Yöntemi](01-projeye-baslangic-ve-calisma-yontemi.md)
+2. [Android Teknoloji Seçimi ve Proje Yapısı](02-android-teknoloji-secimi-ve-proje-yapisi.md)
 
 Yeni geliştirme aşamaları başladıkça bu listeye yeni bölümler eklenecektir.
 
