@@ -15,7 +15,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     steps:
       - name: Kaynak kodu al
@@ -33,8 +33,17 @@ jobs:
       - name: Gradle Wrapper doğrula
         uses: gradle/actions/wrapper-validation@v4
 
+      - name: KVM erişimini hazırla
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
       - name: Birim testlerini çalıştır
         run: ./gradlew testDebugUnitTest
+
+      - name: Sanal cihazda arayüz testlerini çalıştır
+        run: ./gradlew pixel2Api35DebugAndroidTest
 
       - name: Debug APK üret
         run: ./gradlew assembleDebug
@@ -45,3 +54,13 @@ jobs:
           name: paperlit-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
+      - name: Test raporlarını yükle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: paperlit-test-reports
+          path: |
+            app/build/reports/tests/
+            app/build/reports/androidTests/
+          if-no-files-found: warn
