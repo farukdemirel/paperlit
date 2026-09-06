@@ -1,5 +1,7 @@
 # 03 — İlk Android Proje İskeleti
 
+> **Tarihsel düzeltme:** Bu bölümdeki `LibraryUiState`, “Kütüphanem boş” ve belge ifadeleri gerçek PaperLit ürün kapsamı değildir. İlk iskelet yanlış ürün varsayımıyla adlandırılmıştır; yalnız Kotlin/Compose/Gradle/test/APK hattını kanıtlayan geçici teknik örnek olarak korunmaktadır. Gerçek kapsam için [Kanonik Ürün Tanımı](../PRODUCT_DEFINITION.md) geçerlidir.
+
 ## 1. Bu bölümde ne yaptık?
 
 PaperLit reposuna gerçek bir Android uygulama modülü eklendi. Mevcut `streamlit_app.py` ve `requirements.txt` dosyaları değiştirilmedi; Android uygulaması ayrı `app/` klasöründe oluşturuldu.
@@ -157,7 +159,11 @@ Bu bölümden sonra şu soruları cevaplamaya çalış:
 4. GitHub Actions'taki başarılı yeşil işaret bize neyi kanıtlar?
 5. `applicationId` ile ekranda görülen uygulama adı aynı şey midir?
 
-## 12. Bölümün tamamlanma ölçütü
+## 12. Bugünkü değerlendirme
+
+Bu bölümün teknik hedefleri GitHub Actions ve sanal Android cihazında doğrulandı. Ancak örnek ekran ürün açısından kabul edilmiş bir PaperLit ekranı değildir ve gerçek kamera/OCR/fiyat karşılaştırma akışına geçerken değiştirilecektir.
+
+## 13. Bölümün tamamlanma ölçütü
 
 Bu bölüm ancak aşağıdaki sonuçlar alındığında tamamlanmış sayılır:
 
