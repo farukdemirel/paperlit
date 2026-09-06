@@ -43,7 +43,7 @@ jobs:
         run: ./gradlew testDebugUnitTest
 
       - name: Sanal cihazda arayüz testlerini çalıştır
-        run: ./gradlew pixel2Api35DebugAndroidTest
+        run: ./gradlew pixel2Api35DebugAndroidTest -Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect
 
       - name: Debug APK üret
         run: ./gradlew assembleDebug
