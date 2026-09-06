@@ -2,11 +2,19 @@
 
 ## 1. Projenin amacı
 
-PaperLit, Android üzerinde çalışacak ve kullanıcının belgelerini cihazında yönetip okuyabilmesini sağlayacak bir uygulama olarak geliştirilecektir.
+PaperLit, Android telefonda çalışan; ürün ambalajındaki miktar bilgilerini kamera ve OCR yardımıyla okuyarak fiyat karşılaştırması yapan yerel bir uygulamadır.
+
+Uygulama, OCR ile bulunan rulo/adet sayısı, yaprak sayısı, kat sayısı, ölçü ve uzunluk gibi bilgileri kullanıcıya doğrulatır. Marka okunamazsa kullanıcı elle yazabilir veya geçmiş markalardan seçebilir. Fiyat elle girilebilir; ileride ayrı bir raf/fiyat etiketi fotoğrafından da okunabilir.
+
+Doğrulanmış her okuma cihazdaki SQLite veritabanına kaydedilir. Daha önce görülen ürünler yeniden bulunabilir, karşılaştırılabilir ve güncellenebilir. Temel kullanım internet veya hosting gerektirmez.
+
+Bağlayıcı ve ayrıntılı kapsam: [PaperLit — Kanonik Ürün Tanımı](../PRODUCT_DEFINITION.md)
+
+**PaperLit bir PDF, e-kitap, belge yönetimi veya belge okuma uygulaması değildir.**
 
 Bu proje aceleyle tamamlanacak tek seferlik bir kod üretimi değildir. Aynı zamanda uygulamalı bir Android geliştirme eğitimidir.
 
-Başlangıçta bilgisayarda Android geliştirme ve derleme ortamının bulunması zorunlu değildir. İlk APK'lar GitHub Actions kullanılarak üretilebilir. Yerel Android geliştirme ortamı daha sonraki bir aşamada ayrıca kurulup öğrenilebilir.
+Başlangıçta bilgisayarda Android geliştirme ve derleme ortamının bulunması zorunlu değildir. APK'lar GitHub Actions kullanılarak üretilebilir; ekran akışları sanal Android cihazında test edilebilir. Gerçek kamera ve market kullanımı zamanı geldiğinde fiziksel telefonla doğrulanacaktır.
 
 ## 2. Eğitim yöntemi
 
@@ -19,10 +27,11 @@ Her geliştirme döngüsü şu sırayı izler:
 3. Kod bir `feature/...` dalında geliştirilir.
 4. Otomatik testler çalıştırılır.
 5. GitHub Actions ile APK üretilir.
-6. APK gerçek telefonda denenir.
-7. Öğrenilenler ve alınan kararlar dokümana yazılır.
-8. Pull Request açılarak değişiklikler `main` ile karşılaştırılır.
-9. Sonuç kabul edildikten sonra `main` dalına alınır.
+6. Mümkün olan ekran akışları sanal cihazda doğrulanır.
+7. Gerçek donanım gerektiren aşamalar fiziksel telefonda denenir.
+8. Öğrenilenler ve alınan kararlar dokümana yazılır.
+9. Pull Request açılarak değişiklikler `main` ile karşılaştırılır.
+10. Sonuç kabul edildikten sonra `main` dalına alınır.
 
 ## 3. Branch yapısı
 
@@ -32,99 +41,99 @@ Projenin kabul edilmiş ve çalışan durumunu temsil eder. Deneysel veya tamaml
 
 ### `feature/android-v1`
 
-İlk Android uygulama iskeletinin geliştirileceği daldır. Bu dal `main` üzerinden oluşturulmuştur.
+İlk Android uygulama iskeletinin geliştirildiği daldır. Bu dal `main` üzerinden oluşturulmuştur.
 
-Başlangıç anında:
+## 4. İlk teknik teslim: Android V1 iskeleti
 
-- `Behind: 0`
-- `Ahead: 0`
+İlk teslimde gerçek PaperLit özelliklerinden önce geliştirme ve dağıtım hattının çalıştığı kanıtlandı:
 
-değerleri dalın `main` ile aynı commit'ten başladığını gösterir.
-
-## 4. İlk teslim: Android V1 iskeleti
-
-İlk sürüm, gerçek PaperLit özelliklerinin tamamını içermeyecektir. Önce bütün geliştirme ve dağıtım hattının çalıştığı kanıtlanacaktır.
-
-İlk APK'da hedeflenenler:
-
+- Kotlin ve Jetpack Compose projesi
 - Uygulamanın başarıyla açılması
-- PaperLit başlığının görüntülenmesi
-- Basit bir ana ekran
-- “Kütüphanem boş” başlangıç durumu
+- Basit bir geçici ekran
 - Uygulama sürüm bilgisinin gösterilmesi
-- Temel birim testleri
-- Temel arayüz testi
+- Yerel birim testleri
+- Sanal cihazda Compose arayüz testi
 - GitHub Actions ile başarılı Android derlemesi
-- İndirilebilir ve telefona kurulabilir APK
+- İndirilebilir debug APK
 
-Akış şöyledir:
+İlk iskelette kullanılan `LibraryUiState` ve “Kütüphanem boş” metni gerçek PaperLit tasarımı değildir. Yanlış ürün varsayımından kalan geçici test ekranıdır ve gerçek tarama akışına geçerken kaldırılacaktır.
+
+## 5. Doğru ürün akışı
 
 ```text
-Kaynak kod
+Ambalaj fotoğrafı
     ↓
-GitHub
+OCR ile aday alanlar
     ↓
-Otomatik test
+Kullanıcı doğrulaması/düzeltmesi
     ↓
-Android derleme
+Fiyat girişi veya ayrı fiyat etiketi okuması
     ↓
-APK
+Birim maliyet ve fiyat/performans hesabı
     ↓
-Telefonda deneme
+SQLite'a yeni gözlem kaydı
+    ↓
+Geçmiş ürünlerle karşılaştırma/güncelleme
 ```
 
-Bu zincir başarıyla çalışmadan belge ekleme, kütüphane veya okuma ekranı gibi daha büyük özelliklere geçilmez.
+OCR çıktısı kullanıcı onayı olmadan kesin veri kabul edilmez.
 
-## 5. İlk aşamada öğrenilecek kavramlar
+## 6. İlk aşamada öğrenilecek kavramlar
 
 - Android projesinin temel klasör yapısı
-- Gradle'ın görevi
+- Kotlin, Jetpack Compose ve Gradle'ın görevleri
 - APK'nın ne olduğu ve nasıl üretildiği
 - `main` ile `feature` dalları arasındaki fark
-- Commit kavramı
-- Pull Request'in amacı
+- Commit ve Pull Request kavramları
 - GitHub Actions iş akışı
 - Birim testi ile arayüz testi arasındaki fark
-- APK'nın Android telefona kurulması
+- Kamera izinleri ve görüntü alma
+- OCR sonucu ile doğrulanmış veri arasındaki fark
+- SQLite üzerinde yerel veri saklama
 
-Bu kavramlar toplu ve soyut bir ders şeklinde anlatılmayacaktır. Her biri projede kullanıldığı anda, çalışan örnek üzerinden ele alınacaktır.
+## 7. Öngörülen geliştirme sırası
 
-## 6. Öngörülen geliştirme sırası
+1. Android V1 teknik iskeleti — tamamlandı
+2. GitHub üzerinde sanal cihaz testi — tamamlandı
+3. Gerçek ürün gereksinimleri ve kullanıcı akışı
+4. İlk ürün türü ve veri alanlarının kesinleştirilmesi
+5. Birim maliyet/fiyat-performans hesaplarının örneklerle doğrulanması
+6. Gerçek PaperLit başlangıç ve veri onay ekranı
+7. Kamera ile ambalaj görüntüsü alma
+8. OCR ile ambalaj bilgisi çıkarma
+9. Eksik alanların elle girişi ve geçmiş veriden seçim
+10. Fiyatın elle girilmesi
+11. SQLite veri modeli ve geçmiş gözlemler
+12. Eski ürünü bulma, karşılaştırma ve güncelleme
+13. Ayrı raf/fiyat etiketi kamera okuması
+14. Fiziksel telefon ve market saha testi
 
-1. Android V1 iskeleti
-2. Yerel kütüphane veri modeli
-3. Cihazdan belge ekleme
-4. Kütüphane ekranı
-5. Okuma ekranı
-6. Okuma konumunu cihazda saklama
-7. Arama, sıralama ve kitap bilgileri
-8. Yerel yedekleme ve dışa aktarma
+Bu sıra öğrenme ve test sonuçlarına göre ayrıntılandırılabilir. Uygulamanın yerel çalışma ve hosting gerektirmeme kuralları korunur.
 
-Bu sıra ihtiyaçlara ve öğrenme sürecine göre ayrıntılandırılabilir. Ancak uygulamanın yerel çalışma ve hosting gerektirmeme kuralları korunur.
+## 8. Öğrencinin aktif rolü
 
-## 7. Öğrencinin aktif rolü
+Geliştirme sırasında kullanıcı yalnızca hazır APK'yı deneyen kişi olmayacaktır:
 
-Geliştirme sırasında kullanıcı yalnızca hazır APK'yı deneyen kişi olmayacaktır. Her aşamada:
-
-- Değişiklikleri GitHub üzerinden inceleyecek,
+- GitHub değişikliklerini inceleyecek,
 - Yapılan işi kendi cümleleriyle açıklamaya çalışacak,
-- APK'yı telefonda test edecek,
-- Beklenen ve gerçekleşen davranışı karşılaştıracak,
-- Zaman zaman küçük kod, metin veya ayar değişiklikleri yapacak,
+- Hesaplama örneklerinin doğruluğunu kontrol edecek,
+- Sanal cihaz ve zamanı geldiğinde fiziksel telefon sonuçlarını karşılaştıracak,
+- Küçük kod, metin veya ayar değişiklikleri yapacak,
 - Pull Request içindeki dosya farklarını okuyacaktır.
 
-## 8. Bir bölümün tamamlanma ölçütü
+## 9. Bir bölümün tamamlanma ölçütü
 
-Bir geliştirme bölümü ancak aşağıdaki koşullar sağlandığında tamamlanmış sayılır:
+Bir geliştirme bölümü ancak ilgili koşullar sağlandığında tamamlanmış sayılır:
 
 - Kod hedeflenen davranışı sağlıyor.
 - İlgili otomatik testler geçiyor.
 - GitHub Actions derlemesi başarılı.
 - APK üretilebiliyor.
-- Gerçek cihaz testi yapıldı veya neden yapılamadığı kaydedildi.
+- Sanal cihaz testi yapıldı.
+- Fiziksel cihaz gerektiren özelliklerde saha testi yapıldı veya neden ertelendiği kaydedildi.
 - Tutorial bölümü güncellendi.
 - Değişiklikler Pull Request üzerinden incelendi.
 
-## 9. Sıradaki adım
+## 10. Sıradaki adım
 
-`feature/android-v1` dalında temel Android proje yapısı oluşturulacak. İlk ekran, test altyapısı ve APK üreten GitHub Actions iş akışı küçük ve açıklanabilir commit'lere ayrılacaktır.
+İlk karşılaştırılacak ürün türü, zorunlu/isteğe bağlı ambalaj alanları ve hesaplama kuralları örnek ürünler üzerinden kesinleştirilecektir. Bunlar netleşmeden SQLite şeması veya OCR ekranı tasarlanmayacaktır.
