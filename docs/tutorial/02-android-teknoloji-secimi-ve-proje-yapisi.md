@@ -1,5 +1,7 @@
 # 02 — Android Teknoloji Seçimi ve Proje Yapısı
 
+> **Kapsam düzeltmesi:** PaperLit bir PDF/belge okuyucu değildir. Bağlayıcı kapsam [Kanonik Ürün Tanımı](../PRODUCT_DEFINITION.md) belgesidir. Bu bölümdeki Kotlin, Compose, Gradle ve katman kararları geçerlidir; eski kütüphane/belge örnekleri ürün gereksinimi değildir.
+
 ## 1. Bu bölümde ne yapıyoruz?
 
 Bu bölümde henüz uygulama ekranını yazmıyoruz. Önce PaperLit'in hangi Android teknolojileriyle geliştirileceğini ve proje klasörlerinin ne anlama geleceğini kararlaştırıyoruz.
@@ -191,10 +193,10 @@ UI katmanı
 ```
 
 - **UI katmanı:** Ekranda ne gösterileceğini ve kullanıcı olaylarını yönetir.
-- **Data katmanı:** Kitaplar, belgeler, okuma konumu ve diğer uygulama verilerini yönetir.
+- **Data katmanı:** Ürün, marka, ambalaj miktarları, doğrulanmış OCR alanları, fiyatlar, hesaplama sonuçları ve geçmiş gözlemleri yönetir.
 - **Domain katmanı:** Birçok ekranda tekrar kullanılan karmaşık iş kuralları ortaya çıkarsa daha sonra eklenebilir.
 
-V1'in yalnızca boş kütüphane ekranı bulunduğundan başlangıçta yapay repository veya domain sınıfları oluşturmayacağız.
+İlk teknik iskeletteki boş kütüphane ekranı yalnız derleme/test hattı için kullanılan geçici bir örnektir. Gerçek repository ve domain sınırları; ürün alanları ve hesaplama kuralları kesinleştirildikten sonra oluşturulacaktır.
 
 ## 10. Şimdilik eklemediğimiz teknolojiler
 
@@ -236,7 +238,7 @@ Bu bölüm aşağıdaki koşullarda tamamlanmış sayılır:
 
 ## 13. Sıradaki adım
 
-Bir sonraki bölümde gerçek Android proje dosyalarını oluşturacağız. Önce en küçük uygulamayı derleyecek, ardından PaperLit başlığı ve “Kütüphanem boş” durumunu göstereceğiz.
+Bir sonraki bölüm tarihsel olarak ilk Android teknik iskelesini kaydeder. Oradaki “Kütüphanem boş” ekranı gerçek PaperLit işlevi değil, yalnız Compose ve CI hattını doğrulayan geçici test ekranıdır.
 
 ## Resmî kaynaklar
 
