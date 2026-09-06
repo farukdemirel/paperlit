@@ -1,5 +1,7 @@
 # 04 — Telefonsuz Test: GitHub Üzerinde Sanal Android Cihazı
 
+> **Kapsam notu:** Bu bölümde doğrulanan “Kütüphanem boş” ekranı gerçek ürün tasarımı değil, geçici teknik iskelettir. Test altyapısı geçerlidir ve gerçek PaperLit kamera/OCR/fiyat karşılaştırma ekranlarına uygulanacaktır. Bağlayıcı kapsam: [Kanonik Ürün Tanımı](../PRODUCT_DEFINITION.md).
+
 ## 1. Bu bölümde ne yapıyoruz?
 
 PaperLit'in Compose arayüz testini fiziksel telefon olmadan çalıştırıyoruz. GitHub Actions, geçici bir Android sanal cihazı oluşturacak; uygulamayı bu cihaza kuracak ve `PaperLitAppTest` testini çalıştıracaktır.
@@ -85,7 +87,7 @@ Kanıtladıkları:
 
 Kanıtlamadıkları:
 
-- Gerçek telefondaki kamera, barkod okuyucu veya dosya seçici davranışı
+- Gerçek telefondaki kamera ve OCR davranışı
 - Farklı üreticilerin cihazlarına özgü sorunlar
 - Market içindeki gerçek kullanım rahatlığı
 - Pil, performans ve saha koşulları
