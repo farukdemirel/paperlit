@@ -31,13 +31,29 @@ Cihaz kalıcı değildir. GitHub Actions çalışması sırasında hazırlanır 
 
 ## 4. Projede yapılan değişiklikler
 
-`app/build.gradle.kts` dosyasına `pixel2Api35` adlı yönetilen sanal cihaz eklendi.
+`app/build.gradle.kts` dosyasına `pixel2Api35` adlı yerel yönetilen sanal cihaz eklendi. AGP 9.3 Kotlin DSL yapısı şöyledir:
 
-`.github/workflows/android.yml` dosyasına şu test komutu eklendi:
+```kotlin
+testOptions {
+    managedDevices {
+        localDevices {
+            create("pixel2Api35") {
+                device = "Pixel 2"
+                apiLevel = 35
+                systemImageSource = "aosp"
+            }
+        }
+    }
+}
+```
+
+`.github/workflows/android.yml` dosyasında test şu komutla çalıştırılır:
 
 ```bash
-./gradlew pixel2Api35DebugAndroidTest
+./gradlew pixel2Api35DebugAndroidTest -Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect
 ```
+
+`swiftshader_indirect`, GitHub Actions sunucusunda donanım görüntüleme desteğine güvenmeden emülatörün yazılım GPU ile çalışmasını sağlar.
 
 CI sırası artık şöyledir:
 
@@ -46,7 +62,19 @@ CI sırası artık şöyledir:
 3. Debug APK üret.
 4. APK ve test raporlarını artifact olarak yükle.
 
-## 5. Bu test neyi kanıtlar, neyi kanıtlamaz?
+## 5. İlk deneme ve öğrendiğimiz hata
+
+İlk denemede eski DSL biçimi olan `managedDevices { devices { ... } }` kullanıldı. AGP 9.3, `devices` alanını tanımadığı için Gradle daha testlere başlamadan yapılandırma aşamasında durdu:
+
+```text
+Unresolved reference 'devices'
+```
+
+Güncel Android dokümantasyonuna göre yapı `managedDevices { localDevices { ... } }` olarak düzeltildi. Ayrıca GitHub Actions için önerilen yazılım GPU parametresi eklendi.
+
+Bu örnek, CI hatasının her zaman uygulama kodundaki bir hata olmadığını gösterir. Bu kez hata test cihazının Gradle yapılandırmasındaydı.
+
+## 6. Bu test neyi kanıtlar, neyi kanıtlamaz?
 
 Kanıtladıkları:
 
@@ -64,7 +92,7 @@ Kanıtlamadıkları:
 
 Bu nedenle ileride gerçek özellikler eklendiğinde fiziksel telefon ve saha testi ayrıca yapılacaktır.
 
-## 6. Tamamlanma ölçütü
+## 7. Tamamlanma ölçütü
 
 Bu bölüm ancak aşağıdakiler doğrulandığında tamamlanmış sayılır:
 
@@ -75,8 +103,8 @@ Bu bölüm ancak aşağıdakiler doğrulandığında tamamlanmış sayılır:
 - APK artifact olarak indirilebilir durumdadır.
 - Test raporları artifact olarak kaydedilmiştir.
 
-## 7. Mevcut durum
+## 8. Mevcut durum
 
-Sanal cihaz ve CI yapılandırması repoya eklenmiştir. GitHub Actions sonucu henüz doğrulanmadığı için bölüm şu anda **doğrulama bekliyor** durumundadır.
+AGP 9.3 DSL hatası düzeltilmiş ve GitHub Actions için yazılım GPU seçeneği eklenmiştir. Yeni GitHub Actions sonucu henüz doğrulanmadığı için bölüm şu anda **doğrulama bekliyor** durumundadır.
 
 Başarılı çalışma görüldüğünde bu bölümün sonucu güncellenecek ve ilk Android iskeletinin telefonsuz doğrulaması tamamlanacaktır.
