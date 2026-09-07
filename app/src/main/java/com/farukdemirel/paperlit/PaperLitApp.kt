@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -42,8 +43,8 @@ fun PaperLitApp() {
     var plyCount by rememberSaveable { mutableStateOf("3") }
     var sheetWidthMm by rememberSaveable { mutableStateOf("95") }
     var sheetLengthMm by rememberSaveable { mutableStateOf("120") }
-    var metrics by rememberSaveable { mutableStateOf<ToiletPaperPriceMetrics?>(null) }
-    var totalSheets by rememberSaveable { mutableStateOf<Long?>(null) }
+    var metrics by remember { mutableStateOf<ToiletPaperPriceMetrics?>(null) }
+    var totalSheets by remember { mutableStateOf<Long?>(null) }
     var errorMessage by rememberSaveable { mutableStateOf<String?>(null) }
 
     MaterialTheme {
