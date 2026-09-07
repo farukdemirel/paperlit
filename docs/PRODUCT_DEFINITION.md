@@ -10,7 +10,7 @@ Bu belge PaperLit'in bağlayıcı ürün tanımıdır. Kod, tutorial, issue veya
 
 PaperLit, markette karşılaşılan ambalajlı ürünlerin gerçek miktarını ve fiyatını karşılaştırmayı kolaylaştıran yerel bir Android uygulamasıdır.
 
-İlk odak, ambalajında rulo sayısı, yaprak sayısı, kat sayısı, yaprak ölçüsü veya toplam uzunluk gibi karşılaştırılabilir bilgiler bulunan ürünlerdir.
+İlk pilot ürün grubu **tuvalet kâğıdıdır**. Ambalajdaki rulo sayısı, yaprak sayısı, kat sayısı, yaprak ölçüsü veya toplam uzunluk gibi karşılaştırılabilir bilgiler kullanılacaktır. Hesap ve doğrulama modeli oturduktan sonra kâğıt havlu gibi diğer rulo ürünlere genişletilecektir.
 
 Uygulama:
 
@@ -141,8 +141,8 @@ Mevcut `LibraryUiState`, “Kütüphanem boş” metni ve belge odaklı adlandı
 
 Kodlamadan önce:
 
-1. Karşılaştırılacak ilk ürün türü kesinleştirilecek.
-2. Zorunlu ve isteğe bağlı veri alanları belirlenecek.
-3. Birim maliyet formülleri örnek ürünlerle doğrulanacak.
-4. OCR onay ekranının kullanıcı akışı tasarlanacak.
-5. Ardından gerçek PaperLit veri modeli ve başlangıç ekranı geliştirilecektir.
+1. Pilot ürün olarak tuvalet kâğıdı seçildi.
+2. İlk doğrulanmış paket modeli ve birim maliyet hesaplama çekirdeği oluşturuldu.
+3. Hesaplama sonuçları birim testleri ve GitHub Actions ile doğrulanacaktır.
+4. Ardından gerçek PaperLit başlangıç ekranı ve ürün bilgisi onay formu geliştirilecektir.
+5. Form örnek veriyle doğrulandıktan sonra kamera ve OCR akışı eklenecektir.
