@@ -26,6 +26,7 @@ Bölümler numara sırasıyla okunmalıdır. Her bölüm mümkün olduğunca şu
 3. [İlk Android Proje İskeleti](03-ilk-android-proje-iskelesi.md)
 4. [Telefonsuz Test: GitHub Üzerinde Sanal Android Cihazı](04-telefonsuz-test-sanal-android-cihazi.md)
 5. [Pilot Ürün ve Hesaplama Çekirdeği](05-pilot-urun-ve-hesaplama-cekirdegi.md)
+6. [İlk Gerçek Ürün Bilgisi ve Hesaplama Ekranı](06-ilk-gercek-urun-hesaplama-ekrani.md)
 
 > 03 ve 04. bölümlerde geçen `LibraryUiState` ve “Kütüphanem boş” ekranı gerçek ürün tasarımı değildir. Yanlış ürün varsayımıyla oluşturulmuş, yalnız Android/Compose/CI hattını doğrulayan geçici iskelettir.
 
